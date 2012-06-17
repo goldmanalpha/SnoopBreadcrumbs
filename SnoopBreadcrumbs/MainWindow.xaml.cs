@@ -26,6 +26,8 @@ namespace SnoopBreadcrumbs
             InitializeComponent();
 
             this.DataContext = (_vm = new MainVM());
+
+            _vm.TestMethod();
         }
 
         private void Go_Button_Click(object sender, RoutedEventArgs e)

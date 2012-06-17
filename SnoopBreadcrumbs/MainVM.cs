@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Xml.Linq;
 
 namespace SnoopBreadcrumbs
 {
@@ -31,50 +32,32 @@ namespace SnoopBreadcrumbs
             }
         }
 
-String _xmlString =
-        @"<?xml version='1.0'?>
-<!-- This is a sample XML document -->
-<Items>          <Item>test with a child element <more/> stuff</Item>
+        String _xmlString =
+                @"<Items >          <Item>test with a child element <more/> stuff</Item>
+<TextBox /><TextBox Tag=""aTag"" /><ListBox />
 </Items>";
-
-        public void TestMethod1()
-        {
-            var doc = new XmlDocument();
-            doc.PreserveWhitespace = true;
-            doc.Load(new StringReader(_xmlString));
-
-            var builder = new StringBuilder();
-            var sw = new StringWriter(builder);
-
-            var tw = new XmlTextWriter(sw);
-            try
-            {
-                tw.Formatting = Formatting.Indented; //this preserves indentation
-                doc.Save(tw);
-                DisplayText = builder.ToString();
-            }
-            finally
-            {
-                tw.Close();
-            }
-
-
-
-        }
-
 
         public void TestMethod()
         {
+
+            var frameworkElements = new AssemblyHelper()
+                .GetFrameworkElements().Select(fe => fe.Name);
+
             StringBuilder output = new StringBuilder();
+            XmlWriterSettings ws = new XmlWriterSettings();
+            XmlWriter writer = null;
 
             // Create an XmlReader
             using (XmlTextReader reader =
                 new XmlTextReader(new StringReader(_xmlString)))
             {
-                XmlWriterSettings ws = new XmlWriterSettings();
-                ws.Indent = true;
-                using (XmlWriter writer = XmlWriter.Create(output, ws))
+                //ws.OmitXmlDeclaration = true;
+                //ws.Indent = true;
+                //ws.NewLineOnAttributes = true;
+ 
+                using (writer = XmlWriter.Create(output, ws))
                 {
+                    bool passedFirst = false;
 
                     // Parse the file and display each of the nodes.
                     while (reader.Read())
@@ -82,9 +65,23 @@ String _xmlString =
                         switch (reader.NodeType)
                         {
                             case XmlNodeType.Element:
-                                writer.WriteStartElement(reader.Name);
 
-                                writer.WriteAttributeString("LineNo", reader.LineNumber.ToString());
+                                writer.WriteStartElement(reader.Name);
+                                writer.WriteAttributes(reader, false);
+
+                                if (frameworkElements.Contains(reader.Name))
+                                {
+                                    bool hasTag = reader.GetAttribute("Tag") != null;
+
+                                    if (!hasTag)
+                                        writer.WriteAttributeString("Tag",
+                                           reader.LineNumber.ToString());
+                                }
+
+                                if (reader.IsEmptyElement)
+                                {
+                                    writer.WriteEndElement();
+                                }
                                 break;
                             case XmlNodeType.Text:
                                 writer.WriteString(reader.Value);
@@ -97,15 +94,20 @@ String _xmlString =
                                 writer.WriteComment(reader.Value);
                                 break;
                             case XmlNodeType.EndElement:
+
                                 writer.WriteFullEndElement();
                                 break;
                         }
+
+                        passedFirst = true;
                     }
 
                 }
             }
 
-            this.DisplayText = output.ToString();
+
+            XDocument doc = XDocument.Parse(output.ToString());
+            this.DisplayText = doc.ToString();
         }
     }
 }
