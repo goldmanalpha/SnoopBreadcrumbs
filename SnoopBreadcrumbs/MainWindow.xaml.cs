@@ -27,12 +27,18 @@ namespace SnoopBreadcrumbs
 
             this.DataContext = (_vm = new MainVM());
 
-            _vm.TagXmlElements();
+           // _vm.TagXmlElements();
         }
 
-        private void Go_Button_Click(object sender, RoutedEventArgs e)
+        private void GetFolderButtonClick(object sender, RoutedEventArgs e)
         {
-            _vm.TagXmlElements();
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                _vm.RootFolder = dialog.SelectedPath;
+            }
         }
 
 

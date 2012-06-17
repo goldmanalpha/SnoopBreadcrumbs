@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Xml.Linq;
+using System.Windows;
 
 namespace SnoopBreadcrumbs
 {
@@ -32,6 +33,47 @@ namespace SnoopBreadcrumbs
             }
         }
 
+
+
+        int _totalFilesToProcess;
+
+        public int TotalFilesToProcess
+        {
+            get { return _totalFilesToProcess; }
+            set
+            {
+                CheckPropertyChanged("TotalFilesToProcess", ref _totalFilesToProcess, ref value);
+            }
+        }
+
+
+
+
+        int _filesProcessed;
+
+        public int FilesProcessed
+        {
+            get { return _filesProcessed; }
+            set
+            {
+                CheckPropertyChanged("FilesProcessed", ref _filesProcessed, ref value);
+            }
+        }
+
+
+
+        string _rootFolder;
+
+        public string RootFolder
+        {
+            get { return _rootFolder; }
+            set
+            {
+                CheckPropertyChanged("RootFolder", ref _rootFolder, ref value);
+            }
+        }
+        
+        
 
         public void TagXmlElements()
         {
