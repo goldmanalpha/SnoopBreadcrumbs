@@ -170,6 +170,7 @@ namespace SnoopBreadcrumbs
             }
 
             AddMessage("Looking for Xamls in " + root);
+            
             List<string> xamls = new List<string>();
 
             ScanDir(root, xamls);
@@ -204,8 +205,15 @@ namespace SnoopBreadcrumbs
         void AddMessage(string message, bool isStatus = true, bool isDetail = true)
         {
             var hasText = DisplayText.Length > 0;
-        }
 
+            var prefix = string.Empty;
+
+            if (hasText)
+                prefix = "\r\n";
+
+
+            DisplayText += string.Format("{0}  {1} {2}", prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
+        }
     }
 
 }

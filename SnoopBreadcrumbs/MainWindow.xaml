@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SnoopBreadcrumbs.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Xaml Breadcrumbs for Snoop" Height="350" Width="525">
+        Title="Xaml Breadcrumbs for Snoop" Height="350" Width="650">
     <Window.Resources>
         <Style TargetType="HeaderedContentControl">
             <Setter Property="Template">
@@ -27,9 +27,9 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid Opacity=".25"
@@ -71,7 +71,9 @@
             </Grid>
 
         </HeaderedContentControl>
-            <Button Click="ProcessXamlsClick">Process</Button>
+            <Button Click="ProcessXamlsClick"
+                    HorizontalAlignment="Left"
+                    >Process</Button>
 </StackPanel>
         <GridSplitter 
             ResizeDirection="Rows" 
@@ -86,6 +88,8 @@
             Text="{Binding DisplayText, Mode=OneWay}"
                 Margin="0"
                 VerticalScrollBarVisibility="Auto"
+             VerticalAlignment="Stretch"
+            
                 />
 
 

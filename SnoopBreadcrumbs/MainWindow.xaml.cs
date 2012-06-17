@@ -43,7 +43,7 @@ namespace SnoopBreadcrumbs
 
         private void ProcessXamlsClick(object sender, RoutedEventArgs e)
         {
-
+            _vm.ProcessXamls();
         }
 
 
