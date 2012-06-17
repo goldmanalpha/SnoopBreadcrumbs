@@ -32,12 +32,19 @@ namespace SnoopBreadcrumbs
             }
         }
 
-        String _xmlString =
-                @"<Items >          <Item>test with a child element <more/> stuff</Item>
+
+        public void TagXmlElements()
+        {
+            String xmlString =
+                    @"<Items > <!-- comment -->
+<Item>test with a child element <more/> stuff</Item>
 <TextBox /><TextBox Tag=""aTag"" /><ListBox />
 </Items>";
 
-        public void TestMethod()
+            this.DisplayText = TagXmlElements(xmlString, "file pointer ");
+        }
+
+        private string TagXmlElements(string xmlSource, string prefix)
         {
 
             var frameworkElements = new AssemblyHelper()
@@ -49,7 +56,7 @@ namespace SnoopBreadcrumbs
 
             // Create an XmlReader
             using (XmlTextReader reader =
-                new XmlTextReader(new StringReader(_xmlString)))
+                new XmlTextReader(new StringReader(xmlSource)))
             {
                 //ws.OmitXmlDeclaration = true;
                 //ws.Indent = true;
@@ -75,7 +82,7 @@ namespace SnoopBreadcrumbs
 
                                     if (!hasTag)
                                         writer.WriteAttributeString("Tag",
-                                           reader.LineNumber.ToString());
+                                            prefix + " Ln " + reader.LineNumber.ToString());
                                 }
 
                                 if (reader.IsEmptyElement)
@@ -107,7 +114,7 @@ namespace SnoopBreadcrumbs
 
 
             XDocument doc = XDocument.Parse(output.ToString());
-            this.DisplayText = doc.ToString();
+            return doc.ToString();
         }
     }
 }

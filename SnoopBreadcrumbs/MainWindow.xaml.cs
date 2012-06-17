@@ -27,12 +27,12 @@ namespace SnoopBreadcrumbs
 
             this.DataContext = (_vm = new MainVM());
 
-            _vm.TestMethod();
+            _vm.TagXmlElements();
         }
 
         private void Go_Button_Click(object sender, RoutedEventArgs e)
         {
-            _vm.TestMethod();
+            _vm.TagXmlElements();
         }
 
 
