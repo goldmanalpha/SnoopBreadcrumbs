@@ -15,8 +15,7 @@ namespace SnoopBreadcrumbs
         public MainVM()
         {
 
-            //var x = new System.Xml.XmlTextReader(@"C:\Data\Dropbox\Prog\SnoopBreadcrumbs\SnoopBreadcrumbs\MainVM.cs");
-
+            DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended."; 
         }
 
 
@@ -72,8 +71,8 @@ namespace SnoopBreadcrumbs
                 CheckPropertyChanged("RootFolder", ref _rootFolder, ref value);
             }
         }
-        
-        
+
+
 
         public void TagXmlElements()
         {
@@ -103,11 +102,9 @@ namespace SnoopBreadcrumbs
                 //ws.OmitXmlDeclaration = true;
                 //ws.Indent = true;
                 //ws.NewLineOnAttributes = true;
- 
+
                 using (writer = XmlWriter.Create(output, ws))
                 {
-                    bool passedFirst = false;
-
                     // Parse the file and display each of the nodes.
                     while (reader.Read())
                     {
@@ -147,8 +144,6 @@ namespace SnoopBreadcrumbs
                                 writer.WriteFullEndElement();
                                 break;
                         }
-
-                        passedFirst = true;
                     }
 
                 }
@@ -158,5 +153,59 @@ namespace SnoopBreadcrumbs
             XDocument doc = XDocument.Parse(output.ToString());
             return doc.ToString();
         }
+
+
+        public void ProcessXamls()
+        {
+            AddMessage("Finding Xamls");
+
+
+            var root = this.RootFolder;
+            if (!System.IO.Directory.Exists(root))
+            {
+                var msg = "Can't process.  Pick a root directory for your *copied* project.";
+                AddMessage(msg);
+                MessageBox.Show(msg, "Invalid Folder");
+                return;
+            }
+
+            AddMessage("Looking for Xamls in " + root);
+            List<string> xamls = new List<string>();
+
+            ScanDir(root, xamls);
+
+            AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
+
+        }
+
+        void ScanDir(string path, List<string> files)
+        {
+
+            var xamls = System.IO.Directory.GetFiles(path)
+                .Where(f => f.EndsWith(".xaml",
+                    StringComparison.InvariantCultureIgnoreCase));
+
+            foreach (var file in xamls)
+            {
+                files.Add(file);
+                AddMessage(file);
+            }
+
+            var dirs = System.IO.Directory.GetDirectories(path);
+
+            foreach (var dir in dirs)
+            {
+                ScanDir(dir, files);
+            }
+
+        }
+
+
+        void AddMessage(string message, bool isStatus = true, bool isDetail = true)
+        {
+            var hasText = DisplayText.Length > 0;
+        }
+
     }
+
 }

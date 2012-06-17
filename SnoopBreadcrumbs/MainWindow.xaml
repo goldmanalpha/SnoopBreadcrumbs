@@ -54,6 +54,7 @@
             </StackPanel>
         </Grid>
 
+        <StackPanel>
         <HeaderedContentControl HeaderedContentControl.Header="Root Folder">
             <Grid>
                 <TextBox 
@@ -70,7 +71,8 @@
             </Grid>
 
         </HeaderedContentControl>
-
+            <Button Click="ProcessXamlsClick">Process</Button>
+</StackPanel>
         <GridSplitter 
             ResizeDirection="Rows" 
             Grid.Row="1"
