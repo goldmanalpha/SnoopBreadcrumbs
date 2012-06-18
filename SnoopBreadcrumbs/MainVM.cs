@@ -102,6 +102,8 @@ namespace SnoopBreadcrumbs
 
 
         const string LineNumberFormatTag = "{LineNo}";
+        HashSet<string> _requiresXPrefix = new HashSet<string>(){"xmlns", "Class"};
+
         /// <summary>
         /// 
         /// </summary>
@@ -152,8 +154,8 @@ namespace SnoopBreadcrumbs
                                     reader.MoveToNextAttribute();
                                     var name = reader.Name;
 
-                                    if (name == "xmlns")
-                                        name = "x:xmlns";
+                                    if (this._requiresXPrefix.Contains(name))
+                                        name = "x:" + name;
 
                                     if (name.Contains(":"))
                                     {
@@ -216,10 +218,18 @@ namespace SnoopBreadcrumbs
             var task = Task.Factory.StartNew(
                 () =>
                 {
-                    //while (true)
+                    try
+                    {
                         ProcessXamls2();
+                    }
+                    catch (Exception ex)
+                    {
+                        AddMessage("Exception: " + ex.ToString());
+                    }                        
                 }
                 );
+
+            
 
             task.ContinueWith(obj =>
                 {
@@ -272,6 +282,10 @@ namespace SnoopBreadcrumbs
 
                 var newXaml = this.TagXmlElements(xaml,
                     fileName + ": " + LineNumberFormatTag + " " + file);
+
+                AddMessage("Writing: " + file);
+
+                System.IO.File.WriteAllText(file, newXaml);
             }
 
 
