@@ -16,7 +16,7 @@ namespace SnoopBreadcrumbs
 
         public MainVM()
         {
-
+            this.RootFolder = @"C:\temp";
             DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended.";
         }
 
@@ -75,21 +75,16 @@ namespace SnoopBreadcrumbs
         }
 
 
-
-        public void TagXmlElements()
+        const string LineNumberFormatTag = "{LineNo}";
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xmlSource"></param>
+        /// <param name="format">must include "{LineNo}" for Line Number spot</param>
+        /// <returns></returns>
+        private string TagXmlElements(string xmlSource, string format = LineNumberFormatTag)
         {
-            String xmlString =
-                    @"<Items > <!-- comment -->
-<Item>test with a child element <more/> stuff</Item>
-<TextBox /><TextBox Tag=""aTag"" /><ListBox />
-</Items>";
-
-            this.DisplayText = TagXmlElements(xmlString, "file pointer ");
-        }
-
-        private string TagXmlElements(string xmlSource, string prefix)
-        {
-
+            format = format.Replace(LineNumberFormatTag, "{0}");
             var frameworkElements = new AssemblyHelper()
                 .GetFrameworkElements().Select(fe => fe.Name);
 
@@ -113,9 +108,39 @@ namespace SnoopBreadcrumbs
                         switch (reader.NodeType)
                         {
                             case XmlNodeType.Element:
+                                //writer.WriteAttributes(reader, false);
+                                var eName = reader.Name;
 
-                                writer.WriteStartElement(reader.Name);
-                                writer.WriteAttributes(reader, false);
+                                if (eName.Contains(":"))
+                                    {
+                                        var split = eName.Split(':');
+                                        writer.WriteStartElement(split[0], split[1], null);
+                                    }
+                                    else
+                                    {
+                                        writer.WriteStartElement(eName);
+                                    }
+
+                                for (int i = 0; i < reader.AttributeCount; ++i)
+                                {
+                                    reader.MoveToNextAttribute();
+                                    var name = reader.Name;
+
+                                    if (name == "xmlns")
+                                        name = "x:xmlns";
+
+                                    if (name.Contains(":"))
+                                    {
+                                        var split = name.Split(':');
+                                        writer.WriteAttributeString(split[0], split[1], null, reader.Value);
+                                    }
+                                    else
+                                    {
+                                        writer.WriteAttributeString(name, reader.Value);
+                                    }
+                                    
+                                }
+
 
                                 if (frameworkElements.Contains(reader.Name))
                                 {
@@ -123,7 +148,7 @@ namespace SnoopBreadcrumbs
 
                                     if (!hasTag)
                                         writer.WriteAttributeString("Tag",
-                                            prefix + " Ln " + reader.LineNumber.ToString());
+                                            string.Format(format, reader.LineNumber.ToString()));
                                 }
 
                                 if (reader.IsEmptyElement)
@@ -190,6 +215,29 @@ namespace SnoopBreadcrumbs
 
             AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
 
+            AddMessage("Inserting Xaml Tags");
+
+            int count = 0;
+            foreach (var file in xamls)
+            {
+                AddMessage("Processing " + file);
+
+                this.FilesProcessed = count++;
+
+                var xaml = System.IO.File.ReadAllText(file);
+
+                var fileName = Path.GetFileName(file);
+
+                var newXaml = this.TagXmlElements(xaml,
+                    fileName + ": " + LineNumberFormatTag + " " + file);
+
+                //System.IO.File.WriteAllText(file, newXaml);
+
+
+
+            }
+
+
         }
 
         void ScanDir(string path, List<string> files)
@@ -214,7 +262,12 @@ namespace SnoopBreadcrumbs
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="isStatus">updates 1 line status</param>
+        /// <param name="isDetail">updates running log</param>
         void AddMessage(string message, bool isStatus = true, bool isDetail = true)
         {
             var hasText = DisplayText.Length > 0;
@@ -224,6 +277,7 @@ namespace SnoopBreadcrumbs
             if (hasText)
                 prefix = "\r\n";
 
+            if (isDetail)
                 DisplayText += string.Format("{0}  {1} {2}", 
                     prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
         }
