@@ -93,7 +93,7 @@
                 Margin="0"
                 VerticalScrollBarVisibility="Auto"
              VerticalAlignment="Stretch"
-            
+            HorizontalScrollBarVisibility="Auto"
                 />
 
         <TextBlock

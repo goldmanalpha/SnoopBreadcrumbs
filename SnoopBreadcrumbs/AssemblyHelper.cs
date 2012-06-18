@@ -31,6 +31,8 @@ namespace SnoopBreadcrumbs
                 }
             }
 
+            list = list.OrderBy(f => f.Name).ToList();
+
             return list;
         }
     }

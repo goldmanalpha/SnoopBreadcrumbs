@@ -46,7 +46,7 @@ namespace SnoopBreadcrumbs
                 CheckPropertyChanged("LastDisplayText", ref _lastDisplayText, ref value);
             }
         }
-        
+
 
 
         int _totalFilesToProcess;
@@ -102,7 +102,7 @@ namespace SnoopBreadcrumbs
 
 
         const string LineNumberFormatTag = "{LineNo}";
-        HashSet<string> _requiresXPrefix = new HashSet<string>(){"xmlns", "Class"};
+        HashSet<string> _requiresXPrefix = new HashSet<string>() { "xmlns", "Class" };
 
         /// <summary>
         /// 
@@ -124,9 +124,7 @@ namespace SnoopBreadcrumbs
             using (XmlTextReader reader =
                 new XmlTextReader(new StringReader(xmlSource)))
             {
-                //ws.OmitXmlDeclaration = true;
-                //ws.Indent = true;
-                //ws.NewLineOnAttributes = true;
+                ws.ConformanceLevel = ConformanceLevel.Auto;
 
                 using (writer = XmlWriter.Create(output, ws))
                 {
@@ -138,6 +136,7 @@ namespace SnoopBreadcrumbs
                             case XmlNodeType.Element:
                                 //writer.WriteAttributes(reader, false);
                                 var eName = reader.Name;
+                                var hasValue = !reader.IsEmptyElement;
 
                                 if (eName.Contains(":"))
                                 {
@@ -170,7 +169,7 @@ namespace SnoopBreadcrumbs
                                 }
 
 
-                                if (frameworkElements.Contains(reader.Name))
+                                if (frameworkElements.Contains(eName))
                                 {
                                     bool hasTag = reader.GetAttribute("Tag") != null;
 
@@ -179,7 +178,7 @@ namespace SnoopBreadcrumbs
                                             string.Format(format, reader.LineNumber.ToString()));
                                 }
 
-                                if (reader.IsEmptyElement)
+                                if (!hasValue)
                                 {
                                     writer.WriteEndElement();
                                 }
@@ -195,8 +194,7 @@ namespace SnoopBreadcrumbs
                                 writer.WriteComment(reader.Value);
                                 break;
                             case XmlNodeType.EndElement:
-
-                                writer.WriteFullEndElement();
+                                    writer.WriteFullEndElement();
                                 break;
                         }
                     }
@@ -225,11 +223,11 @@ namespace SnoopBreadcrumbs
                     catch (Exception ex)
                     {
                         AddMessage("Exception: " + ex.ToString());
-                    }                        
+                    }
                 }
                 );
 
-            
+
 
             task.ContinueWith(obj =>
                 {
@@ -270,7 +268,7 @@ namespace SnoopBreadcrumbs
             AddMessage("Inserting Xaml Tags");
 
             int count = 0;
-            foreach (var file in xamls)
+            foreach (var file in xamls.Where(n => n.EndsWith("CoolCircle.xaml")))
             {
                 AddMessage("Processing " + file);
 
@@ -284,6 +282,8 @@ namespace SnoopBreadcrumbs
                     fileName + ": " + LineNumberFormatTag + " " + file);
 
                 AddMessage("Writing: " + file);
+
+                //DisplayText = newXaml;
 
                 System.IO.File.WriteAllText(file, newXaml);
             }
@@ -329,7 +329,7 @@ namespace SnoopBreadcrumbs
                 prefix = "\r\n";
 
             if (isDetail)
-            { 
+            {
                 DisplayText += string.Format("{0}  {1} {2}",
                     prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
 
