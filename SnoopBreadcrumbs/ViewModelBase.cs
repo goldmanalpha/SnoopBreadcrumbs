@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace ViewModels
 {
@@ -33,7 +34,9 @@ namespace ViewModels
             if (!Equals(oldValue, newValue))
             {
                 oldValue = newValue;
-                RaisePropertyChanged(propertyName);
+
+                Dispatcher.CurrentDispatcher.Invoke(new Action(
+                    () => RaisePropertyChanged(propertyName)));
                 return true;
             }
 

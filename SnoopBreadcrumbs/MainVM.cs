@@ -6,6 +6,8 @@ using System.Xml;
 using System.IO;
 using System.Xml.Linq;
 using System.Windows;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace SnoopBreadcrumbs
 {
@@ -15,7 +17,7 @@ namespace SnoopBreadcrumbs
         public MainVM()
         {
 
-            DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended."; 
+            DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended.";
         }
 
 
@@ -157,6 +159,15 @@ namespace SnoopBreadcrumbs
 
         public void ProcessXamls()
         {
+            var task = Task.Factory.StartNew(ProcessXamls2);
+
+            task.ContinueWith(obj =>
+                DisplayText += "\r\nFinished");
+
+        }
+
+        public void ProcessXamls2()
+        {
             AddMessage("Finding Xamls");
 
 
@@ -169,8 +180,10 @@ namespace SnoopBreadcrumbs
                 return;
             }
 
+            DisplayText = string.Empty;
+
             AddMessage("Looking for Xamls in " + root);
-            
+
             List<string> xamls = new List<string>();
 
             ScanDir(root, xamls);
@@ -211,8 +224,8 @@ namespace SnoopBreadcrumbs
             if (hasText)
                 prefix = "\r\n";
 
-
-            DisplayText += string.Format("{0}  {1} {2}", prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
+                DisplayText += string.Format("{0}  {1} {2}", 
+                    prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
         }
     }
 
