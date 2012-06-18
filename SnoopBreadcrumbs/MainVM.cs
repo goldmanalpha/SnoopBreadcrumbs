@@ -36,6 +36,19 @@ namespace SnoopBreadcrumbs
 
 
 
+        string _lastDisplayText;
+
+        public string LastDisplayText
+        {
+            get { return _lastDisplayText; }
+            set
+            {
+                CheckPropertyChanged("LastDisplayText", ref _lastDisplayText, ref value);
+            }
+        }
+        
+
+
         int _totalFilesToProcess;
 
         public int TotalFilesToProcess
@@ -71,6 +84,19 @@ namespace SnoopBreadcrumbs
             set
             {
                 CheckPropertyChanged("RootFolder", ref _rootFolder, ref value);
+            }
+        }
+
+
+
+        bool _asyncProcessing;
+
+        public bool AsyncProcessing
+        {
+            get { return _asyncProcessing; }
+            set
+            {
+                CheckPropertyChanged("AsyncProcessing", ref _asyncProcessing, ref value);
             }
         }
 
@@ -112,14 +138,14 @@ namespace SnoopBreadcrumbs
                                 var eName = reader.Name;
 
                                 if (eName.Contains(":"))
-                                    {
-                                        var split = eName.Split(':');
-                                        writer.WriteStartElement(split[0], split[1], null);
-                                    }
-                                    else
-                                    {
-                                        writer.WriteStartElement(eName);
-                                    }
+                                {
+                                    var split = eName.Split(':');
+                                    writer.WriteStartElement(split[0], split[1], null);
+                                }
+                                else
+                                {
+                                    writer.WriteStartElement(eName);
+                                }
 
                                 for (int i = 0; i < reader.AttributeCount; ++i)
                                 {
@@ -138,7 +164,7 @@ namespace SnoopBreadcrumbs
                                     {
                                         writer.WriteAttributeString(name, reader.Value);
                                     }
-                                    
+
                                 }
 
 
@@ -184,17 +210,31 @@ namespace SnoopBreadcrumbs
 
         public void ProcessXamls()
         {
-            var task = Task.Factory.StartNew(ProcessXamls2);
+
+            AsyncProcessing = true;
+
+            var task = Task.Factory.StartNew(
+                () =>
+                {
+                    //while (true)
+                        ProcessXamls2();
+                }
+                );
 
             task.ContinueWith(obj =>
-                DisplayText += "\r\nFinished");
+                {
+
+                    AsyncProcessing = false;
+
+                    this.AddMessage("Finished");
+                }
+                );
 
         }
 
         public void ProcessXamls2()
         {
             AddMessage("Finding Xamls");
-
 
             var root = this.RootFolder;
             if (!System.IO.Directory.Exists(root))
@@ -213,6 +253,8 @@ namespace SnoopBreadcrumbs
 
             ScanDir(root, xamls);
 
+            this.TotalFilesToProcess = xamls.Count;
+
             AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
 
             AddMessage("Inserting Xaml Tags");
@@ -230,11 +272,6 @@ namespace SnoopBreadcrumbs
 
                 var newXaml = this.TagXmlElements(xaml,
                     fileName + ": " + LineNumberFormatTag + " " + file);
-
-                //System.IO.File.WriteAllText(file, newXaml);
-
-
-
             }
 
 
@@ -278,8 +315,12 @@ namespace SnoopBreadcrumbs
                 prefix = "\r\n";
 
             if (isDetail)
-                DisplayText += string.Format("{0}  {1} {2}", 
+            { 
+                DisplayText += string.Format("{0}  {1} {2}",
                     prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
+
+                LastDisplayText = message;
+            }
         }
     }
 

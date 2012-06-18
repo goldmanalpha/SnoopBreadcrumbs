@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Xaml Breadcrumbs for Snoop" Height="350" Width="650">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="B2VConverter" />
         <Style TargetType="HeaderedContentControl">
             <Setter Property="Template">
                 <Setter.Value>
@@ -30,20 +31,45 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <StackPanel>
+            <HeaderedContentControl HeaderedContentControl.Header="Root Folder">
+                <Grid>
+                    <TextBox 
+                x:Name="folderPathTextBox"
+                Text="{Binding RootFolder}"
+                HorizontalAlignment="Stretch"
+                    Height="25"
+                />
 
-        <Grid Opacity=".25"
-                  Visibility="Collapsed"
+                    <Button Click="GetFolderButtonClick"
+                Height="{Binding ElementName=folderPathTextBox, Path=ActualHeight}"
+                HorizontalAlignment="Right"                
+                >...</Button>
+                </Grid>
+
+            </HeaderedContentControl>
+            <Button Click="ProcessXamlsClick"
+                    HorizontalAlignment="Left"
+                    >Process</Button>
+        </StackPanel>
+
+        <Grid Opacity="1"
+                  Visibility="{Binding AsyncProcessing, Converter={StaticResource B2VConverter}}"
+              
+              Background="Green"
                   >
 
             <StackPanel>
                 <ProgressBar Minimum="0" 
-                             Maximum="{Binding MaxValue}"
+                             Maximum="{Binding TotalFilesToProcess}"
                              Value="{Binding FilesProcessed}"
                              Margin="10"
-                             MaxHeight="25"
+                             Height="25"
+                             Foreground="Blue"
                              />
-                <TextBlock>
+                <TextBlock FontSize="13" FontWeight="Bold" HorizontalAlignment="Center">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} of {1} File(s) processed">
                             <Binding Path="FilesProcessed" />
@@ -53,28 +79,6 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
-
-        <StackPanel>
-        <HeaderedContentControl HeaderedContentControl.Header="Root Folder">
-            <Grid>
-                <TextBox 
-                x:Name="folderPathTextBox"
-                Text="{Binding RootFolder}"
-                HorizontalAlignment="Stretch"
-                    Height="25"
-                />
-
-                <Button Click="GetFolderButtonClick"
-                Height="{Binding ElementName=folderPathTextBox, Path=ActualHeight}"
-                HorizontalAlignment="Right"                
-                >...</Button>
-            </Grid>
-
-        </HeaderedContentControl>
-            <Button Click="ProcessXamlsClick"
-                    HorizontalAlignment="Left"
-                    >Process</Button>
-</StackPanel>
         <GridSplitter 
             ResizeDirection="Rows" 
             Grid.Row="1"
@@ -90,6 +94,17 @@
                 VerticalScrollBarVisibility="Auto"
              VerticalAlignment="Stretch"
             
+                />
+
+        <TextBlock
+            Background="Green"
+            Grid.Row="3"
+            Text="{Binding LastDisplayText}"
+                Margin="0"
+               Height="25"
+             HorizontalAlignment="Stretch"
+            FontSize="14"
+            FontWeight="Bold"
                 />
 
 
