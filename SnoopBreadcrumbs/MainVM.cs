@@ -161,7 +161,7 @@ namespace SnoopBreadcrumbs
             AddMessage("Inserting Xaml Tags");
 
             int count = 0;
-            foreach (var file in xamls.Where(n => n.EndsWith("CoolCircle.xaml")))
+            foreach (var file in xamls)
             {
                 AddMessage("Processing " + file);
 

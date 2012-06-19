@@ -14,6 +14,30 @@ namespace CrumbLib
         public const string LineNumberFormatTag = "{LineNo}";
         HashSet<string> _requiresXPrefix = new HashSet<string>() { "xmlns", "Class" };
 
+
+        Queue<XmlNode> TraverseTree(string xml)
+        {
+            var doc = new XmlDocument();
+            var q = new Queue<XmlNode>();
+
+            doc.LoadXml(xml);
+
+            TraverseTree(doc.FirstChild, q);
+
+            return q;
+        }
+
+        void TraverseTree(XmlNode node, Queue<XmlNode> q)
+        {
+            q.Enqueue(node);
+
+            foreach (XmlNode child in node.ChildNodes)
+            {
+                TraverseTree(child, q);
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -29,6 +53,8 @@ namespace CrumbLib
             StringBuilder output = new StringBuilder();
             XmlWriterSettings ws = new XmlWriterSettings();
             XmlWriter writer = null;
+
+            var q = TraverseTree(xmlSource);
 
             // Create an XmlReader
             using (XmlTextReader reader =
@@ -47,6 +73,7 @@ namespace CrumbLib
                                 //writer.WriteAttributes(reader, false);
                                 var eName = reader.Name;
                                 var hasValue = !reader.IsEmptyElement;
+                                var currentNode = q.Dequeue();
 
                                 if (eName.Contains(":"))
                                 {
@@ -81,7 +108,10 @@ namespace CrumbLib
 
                                 if (frameworkElements.Contains(eName))
                                 {
-                                    bool hasTag = reader.GetAttribute("Tag") != null;
+
+                                    bool hasTag = reader.GetAttribute("Tag") != null
+                                        || (currentNode.ChildNodes.Cast<XmlNode>())
+                                        .Any(n => n.Name == eName + ".Tag");
 
                                     if (!hasTag)
                                         writer.WriteAttributeString("Tag",
