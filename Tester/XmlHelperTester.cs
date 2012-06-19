@@ -18,29 +18,89 @@ namespace Tester
             var x = new XmlHelper();
         }
 
-        [Test]
-        public void TestInputOutput()
+        List<string> files;
+        [TestFixtureSetUp]
+
+        public void Init()
         {
-            var files = System.IO.Directory.GetFiles("InputOutput").Where(f => f.EndsWith(".Input.xml"));
-                        var helper = new XmlHelper();
 
+            files = System.IO.Directory.GetFiles("InputOutput").ToList();
+        }
 
+        XmlHelper helper = new XmlHelper();
+
+        void TestSingle(string testName)
+        {
+            var filesIn = files.Where(f => f.EndsWith(".Input.xml") && f.StartsWith(testName));
+
+            if (!filesIn.Any())
+            {
+                Assert.Fail("No files for test: " + testName);
+            }
+   
             foreach (var file in files)
             {
                 var xmlIn = LoadFile(file);
 
                 var outFile = file.Replace(".Input.xml", ".Output.xml");
-                var xmlOut = LoadFile(outFile );
+                var xmlOut = LoadFile(outFile);
 
                 var tagged = helper.TagXmlElements(xmlIn, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
 
-                Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);               
+                Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);
+            }
+        }
+
+        [Test]
+        public void ExpandedTag()
+        {
+            this.TestSingle("ExpandedTag");
+        }
+
+        [Test]
+        public void MCIgnorable()
+        {
+            this.TestSingle("MC.Ignorable");
+        }
+
+        [Test]
+        public void XClass()
+        { 
+            this.TestSingle("XClass");
+        }
+
+
+        [Test]
+        public void XmlNS()
+        {
+            this.TestSingle("XmlNS");
+        }
+
+
+
+
+        [Test]
+        public void TestInputOutput()
+        {
+            var filesIn = files.Where(f => f.EndsWith(".Input.xml"));
+            
+
+            foreach (var file in filesIn)
+            {
+                var xmlIn = LoadFile(file);
+
+                var outFile = file.Replace(".Input.xml", ".Output.xml");
+                var xmlOut = LoadFile(outFile);
+
+                var tagged = helper.TagXmlElements(xmlIn, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
+
+                Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);
             }
         }
 
         string LoadFile(string fileName)
-        { 
-        
+        {
+
             return System.IO.File.ReadAllText(fileName);
 
         }

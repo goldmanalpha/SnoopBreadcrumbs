@@ -57,6 +57,18 @@
     <None Include="Tester.nunit" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="InputOutput\MC.Ignorable.Output.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputOutput\MC.Ignorable.Input.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputOutput\ExpandedTag.Output.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputOutput\ExpandedTag.Input.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="InputOutput\Xml1.Input.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
