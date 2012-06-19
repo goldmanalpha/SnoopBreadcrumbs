@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using CrumbLib;
 
 namespace SnoopBreadcrumbs
 {
