@@ -7,7 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnoopBreadcrumbs", "SnoopBr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{DB65AD9D-6B55-483D-B204-BF7A3BDAB711}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocTestApp", "AdHocTestApp\AdHocTestApp.csproj", "{C0C0ACC5-E615-474D-A1B7-E59ACA36B7AD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApps", "TestApps", "{6F0800EB-08B4-4037-B2A1-64417DE62BB7}"
+	ProjectSection(SolutionItems) = preProject
+		RoboCopyBat.bat = RoboCopyBat.bat
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocTestApp", "TestApps\AdHocTestApp\AdHocTestApp.csproj", "{C0C0ACC5-E615-474D-A1B7-E59ACA36B7AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,5 +67,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C0C0ACC5-E615-474D-A1B7-E59ACA36B7AD} = {6F0800EB-08B4-4037-B2A1-64417DE62BB7}
 	EndGlobalSection
 EndGlobal
