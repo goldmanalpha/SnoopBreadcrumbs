@@ -15,7 +15,7 @@ namespace SnoopBreadcrumbs
 
         public MainVM()
         {
-            this.RootFolder = @"C:\temp";
+            this.RootFolder = @"C:\temp\Main2";
             DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended.";
         }
 
@@ -104,17 +104,21 @@ namespace SnoopBreadcrumbs
         public void ProcessXamls()
         {
 
-            AsyncProcessing = true;
+            this.AsyncProcessing = true;
+            this.FilesProcessed = 0;
+
+            int exceptionCount = 0;
 
             var task = Task.Factory.StartNew(
                 () =>
                 {
                     try
                     {
-                        ProcessXamls2();
+                        exceptionCount += ProcessXamls2();
                     }
                     catch (Exception ex)
                     {
+                        exceptionCount++;
                         AddMessage("Exception: " + ex.ToString());
                     }
                 }
@@ -123,17 +127,17 @@ namespace SnoopBreadcrumbs
 
 
             task.ContinueWith(obj =>
-                {
+            {
 
-                    AsyncProcessing = false;
+                AsyncProcessing = false;
 
-                    this.AddMessage("Finished");
-                }
+                this.AddMessage(string.Format("Finished. Files Processed: {0}.  Excptions {1}.", this.FilesProcessed, exceptionCount));
+            }
                 );
 
         }
 
-        public void ProcessXamls2()
+        public int ProcessXamls2()
         {
             AddMessage("Finding Xamls");
 
@@ -143,7 +147,7 @@ namespace SnoopBreadcrumbs
                 var msg = "Can't process.  Pick a root directory for your *copied* project.";
                 AddMessage(msg);
                 MessageBox.Show(msg, "Invalid Folder");
-                return;
+                return 0;
             }
 
             DisplayText = string.Empty;
@@ -161,27 +165,37 @@ namespace SnoopBreadcrumbs
             AddMessage("Inserting Xaml Tags");
 
             int count = 0;
+            int exceptionCount = 0;
             foreach (var file in xamls)
             {
-                AddMessage("Processing " + file);
+                try
+                {
+                    AddMessage("Processing " + file);
 
-                this.FilesProcessed = count++;
+                    this.FilesProcessed = count++;
 
-                var xaml = System.IO.File.ReadAllText(file);
+                    var xaml = System.IO.File.ReadAllText(file);
 
-                var fileName = Path.GetFileName(file);
+                    var fileName = Path.GetFileName(file);
 
-                var newXaml = this._xmlHelper.TagXmlElements(xaml,
-                    fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file);
+                    var newXaml = this._xmlHelper.TagXmlElements(xaml,
+                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file);
 
-                AddMessage("Writing: " + file);
+                    AddMessage("Writing: " + file);
 
-                //DisplayText = newXaml;
+                    // remove read only:
+                    System.IO.File.SetAttributes(file, FileAttributes.Normal);
+                    System.IO.File.WriteAllText(file, newXaml);
+                }
+                catch (Exception ex)
+                {
+                    exceptionCount++;
+                    AddMessage("Exception: " + ex.ToString());
+                }
 
-                System.IO.File.WriteAllText(file, newXaml);
             }
 
-
+            return exceptionCount;
         }
 
         void ScanDir(string path, List<string> files)
@@ -212,22 +226,16 @@ namespace SnoopBreadcrumbs
         /// <param name="message"></param>
         /// <param name="isStatus">updates 1 line status</param>
         /// <param name="isDetail">updates running log</param>
-        void AddMessage(string message, bool isStatus = true, bool isDetail = true)
+        private void AddMessage(string message, bool isStatus = true, bool isDetail = true)
         {
-            var hasText = DisplayText.Length > 0;
-
-            var prefix = string.Empty;
-
-            if (hasText)
-                prefix = "\r\n";
-
             if (isDetail)
             {
-                DisplayText += string.Format("{0}  {1} {2}",
-                    prefix, DateTime.Now.ToString("hh:mm:ss.fff"), message);
-
-                LastDisplayText = message;
+                DisplayText = string.Format("{0}:  {1}\r\n",
+                    DateTime.Now.ToString("hh:mm:ss.fff"), message) + DisplayText;
             }
+
+            if (isStatus)
+                LastDisplayText = message;
         }
     }
 

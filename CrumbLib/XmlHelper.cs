@@ -46,15 +46,18 @@ namespace CrumbLib
         /// <returns></returns>
         public string TagXmlElements(string xmlSource, string format = LineNumberFormatTag)
         {
+
+            var prefixXOnceList = new List<string>();
+
             format = format.Replace(LineNumberFormatTag, "{0}");
             var frameworkElements = new AssemblyHelper()
-                .GetFrameworkElements().Select(fe => fe.Name);
+                .GetFrameworkElements().Select(fe => fe.Name).ToList();
 
             StringBuilder output = new StringBuilder();
             XmlWriterSettings ws = new XmlWriterSettings();
             XmlWriter writer = null;
 
-            var q = TraverseTree(xmlSource);
+            var q = this.TraverseTree(xmlSource);
 
             // Create an XmlReader
             using (XmlTextReader reader =
@@ -75,6 +78,19 @@ namespace CrumbLib
                                 var hasValue = !reader.IsEmptyElement;
                                 var currentNode = q.Dequeue();
 
+                                //nodes may have more elements than reader shows, resync if needed
+                                int maxTries = 15;
+                                while (currentNode.Name != eName && (currentNode = q.Dequeue()) != null && maxTries-- > 0)
+                                {
+                                }
+
+                                if (currentNode == null || maxTries == 0)
+                                {
+                                    throw new InvalidOperationException("Can't sync to xaml.  aborting.");
+                                }
+
+
+
                                 if (eName.Contains(":"))
                                 {
                                     var split = eName.Split(':');
@@ -85,22 +101,39 @@ namespace CrumbLib
                                     writer.WriteStartElement(eName);
                                 }
 
+
+                                var attributes = new Dictionary<string, string>();
+
+
                                 for (int i = 0; i < reader.AttributeCount; ++i)
                                 {
                                     reader.MoveToNextAttribute();
-                                    var name = reader.Name;
 
-                                    if (this._requiresXPrefix.Contains(name))
+                                    attributes.Add(reader.Name, reader.Value);
+                                }
+
+                                foreach (var attribute in attributes.OrderBy(pair => pair.Key.StartsWith("xmlns") ? 0 : 1))  //put the xmlns first to get the proper output
+                                {
+                                    //for (int i = 0; i < reader.AttributeCount; ++i)
+                                    //{
+                                    //    reader.MoveToNextAttribute();
+                                    var name = attribute.Key;
+
+                                    if (this._requiresXPrefix.Contains(name) && !prefixXOnceList.Contains(name))
+                                    {
+                                        prefixXOnceList.Add(name);
                                         name = "x:" + name;
+                                    }
+
 
                                     if (name.Contains(":"))
                                     {
                                         var split = name.Split(':');
-                                        writer.WriteAttributeString(split[0], split[1], null, reader.Value);
+                                        writer.WriteAttributeString(split[0], split[1], null, attribute.Value);
                                     }
                                     else
                                     {
-                                        writer.WriteAttributeString(name, reader.Value);
+                                        writer.WriteAttributeString(name, attribute.Value);
                                     }
 
                                 }

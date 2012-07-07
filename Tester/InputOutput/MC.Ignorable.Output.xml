@@ -1,5 +1,1 @@
-﻿<object
-  xmlns:ignorablePrefix="ignorableUri"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  mc:Ignorable="ignorablePrefix">
-</object>
+﻿<object xmlns:ignorablePrefix="ignorableUri" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="ignorablePrefix"></object>

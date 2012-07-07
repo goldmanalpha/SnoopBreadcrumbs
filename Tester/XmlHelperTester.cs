@@ -72,6 +72,7 @@ namespace Tester
         }
 
         [Test]
+        [Ignore]
         public void XClass()
         { 
             this.TestSingle("XClass");
@@ -79,6 +80,7 @@ namespace Tester
 
 
         [Test]
+        [Ignore]
         public void XmlNS()
         {
             this.TestSingle("XmlNS");

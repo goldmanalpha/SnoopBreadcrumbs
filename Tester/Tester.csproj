@@ -68,6 +68,7 @@
     </Content>
     <Content Include="InputOutput\ExpandedTag.Input.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="InputOutput\Xml1.Input.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
