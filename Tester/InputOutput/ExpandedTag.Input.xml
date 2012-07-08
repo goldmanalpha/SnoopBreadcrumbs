@@ -1,3 +1,3 @@
-﻿<ListBox>
+<Window><ListBox>
   <ListBox.Tag>xyz</ListBox.Tag>
-</ListBox>
+</ListBox></Window>

@@ -13,7 +13,7 @@ namespace CrumbLib
 
         public const string LineNumberFormatTag = "{LineNo}";
         HashSet<string> _requiresXPrefix = new HashSet<string>() { "xmlns", "Class" };
-
+        string[] _validFirstElement = new[] { "ResourceDictionary", "UserControl", "Window" };
 
         Queue<XmlNode> TraverseTree(string xml)
         {
@@ -44,7 +44,7 @@ namespace CrumbLib
         /// <param name="xmlSource"></param>
         /// <param name="format">must include "{LineNo}" for Line Number spot</param>
         /// <returns></returns>
-        public string TagXmlElements(string xmlSource, string format = LineNumberFormatTag)
+        public string TagXmlElements(string xmlSource, Action<string> logger, string format = LineNumberFormatTag)
         {
 
             var prefixXOnceList = new List<string>();
@@ -58,6 +58,8 @@ namespace CrumbLib
             XmlWriter writer = null;
 
             var q = this.TraverseTree(xmlSource);
+
+            bool isFirstElement = true;
 
             // Create an XmlReader
             using (XmlTextReader reader =
@@ -75,6 +77,18 @@ namespace CrumbLib
                             case XmlNodeType.Element:
                                 //writer.WriteAttributes(reader, false);
                                 var eName = reader.Name;
+                                
+                                if (isFirstElement)
+                                {
+                                    isFirstElement = false;
+
+                                    if (!_validFirstElement.Contains(eName))
+                                    {
+                                        logger(string.Format("Not tagging file with first Element: {0}", eName));
+                                        return xmlSource;
+                                    }
+                                }
+                                
                                 var hasValue = !reader.IsEmptyElement;
                                 var currentNode = q.Dequeue();
 

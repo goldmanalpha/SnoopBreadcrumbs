@@ -8,7 +8,7 @@
         Title="MainWindow" Height="350" Width="525"
          d:DesignWidth="100" d:DesignHeight="100">
     <Grid>
-        <ListBox d:Height="255x">
+        <ListBox d:Height="255x" Tag="">
             
         </ListBox>
     </Grid>

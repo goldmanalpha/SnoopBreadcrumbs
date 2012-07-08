@@ -177,9 +177,11 @@ namespace SnoopBreadcrumbs
                     var xaml = System.IO.File.ReadAllText(file);
 
                     var fileName = Path.GetFileName(file);
-
+                    
                     var newXaml = this._xmlHelper.TagXmlElements(xaml,
-                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file);
+                        s => this.AddMessage(s, false), 
+                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file
+                        );
 
                     AddMessage("Writing: " + file);
 

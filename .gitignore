@@ -2,9 +2,16 @@
 bin
 obj
 
+#Resharper
+_ReSharper.*
+
+#testing app:
+BabySmash
+
 
 #files
 *.suo
+*.user
 
 # mstest test results
 TestResults

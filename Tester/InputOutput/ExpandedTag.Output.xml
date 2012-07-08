@@ -1,3 +1,5 @@
-﻿<ListBox>
-  <ListBox.Tag>xyz</ListBox.Tag>
-</ListBox>
+<Window Tag="**value**1**end**">
+  <ListBox>
+    <ListBox.Tag>xyz</ListBox.Tag>
+  </ListBox>
+</Window>

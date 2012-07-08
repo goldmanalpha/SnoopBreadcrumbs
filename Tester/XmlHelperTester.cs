@@ -31,25 +31,33 @@ namespace Tester
 
         const string testDocFolder = "InputOutput";
 
-        void TestSingle(string testName)
+
+        void TestSingle(string testName) 
         {
-            var filesIn = files.Where(f => f.EndsWith(".Input.xml") && f.StartsWith(testDocFolder  + "\\" + testName));
+            var filesIn = files.Where(f => f == testDocFolder + "\\" + testName + ".Input.xml");
 
             if (!filesIn.Any())
             {
                 Assert.Fail("No files for test: " + testName);
             }
 
-            foreach (var file in filesIn)
+            foreach (var inFile in filesIn)
             {
-                var xmlIn = LoadFile(file);
+                var xmlIn = LoadFile(inFile);
 
-                var outFile = file.Replace(".Input.xml", ".Output.xml");
+                var outFile = inFile.Replace(".Input.xml", ".Output.xml");
                 var xmlOut = LoadFile(outFile);
 
-                var tagged = helper.TagXmlElements(xmlIn, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
+                var tagged = helper.TagXmlElements(xmlIn,s => { }, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
+
+                //for outputting expected values:
+                System.IO.File.WriteAllText(outFile, tagged);
 
                 Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);
+                
+                //in case the source needs a modification                
+                //System.IO.File.WriteAllText(inFile, xmlIn);
+
             }
         }
 
@@ -60,9 +68,21 @@ namespace Tester
         }
 
         [Test]
+        public void SimpleSetTag()
+        {
+            this.TestSingle("SimpleSet");
+        }
+
+        [Test]
         public void Xml1()
         {
             this.TestSingle("Xml1");
+        }
+
+        [Test]
+        public void Xml1UnexpectedOrder()
+        {
+            this.TestSingle("Xml1.UnexpectedOrder");
         }
 
         [Test]
@@ -86,9 +106,16 @@ namespace Tester
             this.TestSingle("XmlNS");
         }
 
+        [Test]
+        public void UnexpectedRootTagReturnsUnchanged()
+        {
+            this.TestSingle("Xml1.UnexpectedRootTag");
+        }
 
 
-
+        /// <summary>
+        /// checks all the files to make sure nothing was forgotten
+        /// </summary>
         [Test]
         public void TestInputOutput()
         {
@@ -102,7 +129,7 @@ namespace Tester
                 var outFile = file.Replace(".Input.xml", ".Output.xml");
                 var xmlOut = LoadFile(outFile);
 
-                var tagged = helper.TagXmlElements(xmlIn, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
+                var tagged = helper.TagXmlElements(xmlIn, s => { }, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
 
                 Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);
             }
