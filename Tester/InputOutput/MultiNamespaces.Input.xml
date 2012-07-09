@@ -1,0 +1,4 @@
+﻿<Window xmlns="http://schemas.microsoft.com/VisualStudio/TeamTest/UITest/2010xxx">
+  <ListBox />
+  <z:ListBox xmlns:z="http://schemas.microsoft.com/ado/2006/04/codegenerationx"/>
+</Window>

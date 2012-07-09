@@ -12,7 +12,8 @@ namespace CrumbLib
     {
 
         public const string LineNumberFormatTag = "{LineNo}";
-        HashSet<string> _requiresXPrefix = new HashSet<string>() { "xmlns", "Class" };
+
+        HashSet<string> _requiresXPrefix = new HashSet<string>() { "Class" };
         string[] _validFirstElement = new[] { "ResourceDictionary", "UserControl", "Window" };
 
         Queue<XmlNode> TraverseTree(string xml)
@@ -77,7 +78,7 @@ namespace CrumbLib
                             case XmlNodeType.Element:
                                 //writer.WriteAttributes(reader, false);
                                 var eName = reader.Name;
-                                
+
                                 if (isFirstElement)
                                 {
                                     isFirstElement = false;
@@ -88,7 +89,7 @@ namespace CrumbLib
                                         return xmlSource;
                                     }
                                 }
-                                
+
                                 var hasValue = !reader.IsEmptyElement;
                                 var currentNode = q.Dequeue();
 
@@ -104,18 +105,6 @@ namespace CrumbLib
                                 }
 
 
-
-                                if (eName.Contains(":"))
-                                {
-                                    var split = eName.Split(':');
-                                    writer.WriteStartElement(split[0], split[1], null);
-                                }
-                                else
-                                {
-                                    writer.WriteStartElement(eName);
-                                }
-
-
                                 var attributes = new Dictionary<string, string>();
 
 
@@ -124,6 +113,31 @@ namespace CrumbLib
                                     reader.MoveToNextAttribute();
 
                                     attributes.Add(reader.Name, reader.Value);
+                                }
+
+                                string xmlns = null;
+                                if (attributes.ContainsKey("xmlns"))
+                                {
+                                    xmlns = attributes["xmlns"];
+                                    attributes.Remove("xmlns");
+                                }
+
+                                if (eName.Contains(":"))
+                                {
+                                    var split = eName.Split(':');
+
+                                    var extraNamespace = "xmlns:" + split[0];
+                                    if (xmlns == null && attributes.ContainsKey(extraNamespace))
+                                    {
+                                        xmlns = attributes[extraNamespace];
+                                        attributes.Remove(extraNamespace);
+                                    }
+
+                                    writer.WriteStartElement(split[0], split[1], xmlns);
+                                }
+                                else
+                                {
+                                    writer.WriteStartElement(eName, xmlns);
                                 }
 
                                 foreach (var attribute in attributes.OrderBy(pair => pair.Key.StartsWith("xmlns") ? 0 : 1))  //put the xmlns first to get the proper output

@@ -112,7 +112,12 @@ namespace Tester
             this.TestSingle("Xml1.UnexpectedRootTag");
         }
 
-
+        [Test]
+        public void MultiNamespaces()
+        {
+            this.TestSingle("MultiNamespaces");
+        }
+        
         /// <summary>
         /// checks all the files to make sure nothing was forgotten
         /// </summary>

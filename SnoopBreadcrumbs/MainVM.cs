@@ -131,6 +131,7 @@ namespace SnoopBreadcrumbs
 
                 AsyncProcessing = false;
 
+                //TODO:  note skipped files count
                 this.AddMessage(string.Format("Finished. Files Processed: {0}.  Excptions {1}.", this.FilesProcessed, exceptionCount));
             }
                 );
