@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineInterpreterTester.cs" />
     <Compile Include="XmlHelperTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -51,6 +52,10 @@
     <ProjectReference Include="..\CrumbLib\CrumbLib.csproj">
       <Project>{883E4D4B-4502-4ED0-83C6-7D399E9EC4DA}</Project>
       <Name>CrumbLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SnoopBCConsole\SnoopBCConsole.csproj">
+      <Project>{5C4F870F-10E9-45D3-8296-D504EDFE4F36}</Project>
+      <Name>SnoopBCConsole</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
