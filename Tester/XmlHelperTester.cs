@@ -46,12 +46,12 @@ namespace Tester
                 var xmlIn = LoadFile(inFile);
 
                 var outFile = inFile.Replace(".Input.xml", ".Output.xml");
-                var xmlOut = LoadFile(outFile);
+                var xmlOut = System.IO.File.Exists(outFile) ? LoadFile(outFile) : null;
 
                 var tagged = helper.TagXmlElements(xmlIn,s => { }, "**value**" + XmlHelper.LineNumberFormatTag + "**end**");
 
                 //for outputting expected values:
-                System.IO.File.WriteAllText(outFile, tagged);
+                //System.IO.File.WriteAllText(outFile, tagged);
 
                 Assert.AreEqual(xmlOut, tagged, "Tagged xml doesn't match: " + outFile);
                 

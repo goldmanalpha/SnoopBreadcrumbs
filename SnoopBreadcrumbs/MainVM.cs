@@ -10,7 +10,7 @@ using CrumbLib;
 
 namespace SnoopBreadcrumbs
 {
-    class MainVM : ViewModels.ViewModelBase
+    class MainVM : ViewModels.ViewModelBase, IMessageHandler
     {
 
         public MainVM()
@@ -114,7 +114,7 @@ namespace SnoopBreadcrumbs
                 {
                     try
                     {
-                        exceptionCount += ProcessXamls2();
+                        exceptionCount += ProcessXamls2(ShowErrMsgBox, this);
                     }
                     catch (Exception ex)
                     {
@@ -138,32 +138,36 @@ namespace SnoopBreadcrumbs
 
         }
 
-        public int ProcessXamls2()
+        void ShowErrMsgBox(string title, string msg)
         {
-            AddMessage("Finding Xamls");
+            MessageBox.Show(msg, title);
+        }
+
+        public int ProcessXamls2(Action<string, string> showError, IMessageHandler msgHandler)
+        {
+            msgHandler.AddMessage("Finding Xamls");
 
             var root = this.RootFolder;
             if (!System.IO.Directory.Exists(root))
             {
-                var msg = "Can't process.  Pick a root directory for your *copied* project.";
-                AddMessage(msg);
-                MessageBox.Show(msg, "Invalid Folder");
+                showError("Invalid Folder", 
+                    "Can't process.  Pick a root directory for your *copied* project.");
                 return 0;
             }
 
             DisplayText = string.Empty;
 
-            AddMessage("Looking for Xamls in " + root);
+            msgHandler.AddMessage("Looking for Xamls in " + root);
 
             List<string> xamls = new List<string>();
 
-            ScanDir(root, xamls);
+            ScanDir(root, xamls, msgHandler);
 
             this.TotalFilesToProcess = xamls.Count;
 
-            AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
+            msgHandler.AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
 
-            AddMessage("Inserting Xaml Tags");
+            msgHandler.AddMessage("Inserting Xaml Tags");
 
             int count = 0;
             int exceptionCount = 0;
@@ -171,7 +175,7 @@ namespace SnoopBreadcrumbs
             {
                 try
                 {
-                    AddMessage("Processing " + file);
+                    msgHandler.AddMessage("Processing " + file);
 
                     this.FilesProcessed = count++;
 
@@ -180,11 +184,11 @@ namespace SnoopBreadcrumbs
                     var fileName = Path.GetFileName(file);
                     
                     var newXaml = this._xmlHelper.TagXmlElements(xaml,
-                        s => this.AddMessage(s, false), 
+                        s => msgHandler.AddMessage(s, false), 
                         fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file
                         );
 
-                    AddMessage("Writing: " + file);
+                    msgHandler.AddMessage("Writing: " + file);
 
                     // remove read only:
                     System.IO.File.SetAttributes(file, FileAttributes.Normal);
@@ -193,7 +197,7 @@ namespace SnoopBreadcrumbs
                 catch (Exception ex)
                 {
                     exceptionCount++;
-                    AddMessage("Exception: " + ex.ToString());
+                    msgHandler.AddMessage("Exception: " + ex.ToString());
                 }
 
             }
@@ -201,7 +205,7 @@ namespace SnoopBreadcrumbs
             return exceptionCount;
         }
 
-        void ScanDir(string path, List<string> files)
+        void ScanDir(string path, List<string> files, IMessageHandler msgHandler)
         {
 
             var xamls = System.IO.Directory.GetFiles(path)
@@ -211,14 +215,14 @@ namespace SnoopBreadcrumbs
             foreach (var file in xamls)
             {
                 files.Add(file);
-                AddMessage(file);
+                msgHandler.AddMessage(file);
             }
 
             var dirs = System.IO.Directory.GetDirectories(path);
 
             foreach (var dir in dirs)
             {
-                ScanDir(dir, files);
+                ScanDir(dir, files, msgHandler);
             }
 
         }
@@ -229,7 +233,7 @@ namespace SnoopBreadcrumbs
         /// <param name="message"></param>
         /// <param name="isStatus">updates 1 line status</param>
         /// <param name="isDetail">updates running log</param>
-        private void AddMessage(string message, bool isStatus = true, bool isDetail = true)
+        public void AddMessage(string message, bool isStatus = true, bool isDetail = true)
         {
             if (isDetail)
             {

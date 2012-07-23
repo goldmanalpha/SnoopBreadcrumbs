@@ -1,0 +1,4 @@
+<Window Tag="**value**1**end**" xmlns="http://schemas.microsoft.com/VisualStudio/TeamTest/UITest/2010xxx">
+  <ListBox Tag="**value**2**end**" />
+  <z:ListBox xmlns:z="http://schemas.microsoft.com/ado/2006/04/codegenerationx" />
+</Window>

@@ -65,6 +65,9 @@
     <Content Include="InputOutput\MultiNamespaces.Input.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="InputOutput\MultiNamespaces.Output.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="InputOutput\Xml1.UnexpectedRootTag.Output.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
