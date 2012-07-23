@@ -19,10 +19,6 @@ namespace SnoopBreadcrumbs
             DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended.";
         }
 
-
-
-
-        XmlHelper _xmlHelper = new XmlHelper();
         string _displayText;
 
         public string DisplayText
@@ -109,12 +105,23 @@ namespace SnoopBreadcrumbs
 
             int exceptionCount = 0;
 
+            DisplayText = string.Empty;
+
             var task = Task.Factory.StartNew(
                 () =>
                 {
                     try
                     {
-                        exceptionCount += ProcessXamls2(ShowErrMsgBox, this);
+                        var processor = new XamlFilesProcessor();
+
+                        var xamls = processor.FindFiles(this.RootFolder,
+                            ShowErrMsgBox, this);
+
+                        this.TotalFilesToProcess = xamls.Count;
+
+                        exceptionCount += processor.ProcessXamls(xamls, 
+                            ShowErrMsgBox, i => this.FilesProcessed = i, this);
+
                     }
                     catch (Exception ex)
                     {
@@ -141,90 +148,6 @@ namespace SnoopBreadcrumbs
         void ShowErrMsgBox(string title, string msg)
         {
             MessageBox.Show(msg, title);
-        }
-
-        public int ProcessXamls2(Action<string, string> showError, IMessageHandler msgHandler)
-        {
-            msgHandler.AddMessage("Finding Xamls");
-
-            var root = this.RootFolder;
-            if (!System.IO.Directory.Exists(root))
-            {
-                showError("Invalid Folder", 
-                    "Can't process.  Pick a root directory for your *copied* project.");
-                return 0;
-            }
-
-            DisplayText = string.Empty;
-
-            msgHandler.AddMessage("Looking for Xamls in " + root);
-
-            List<string> xamls = new List<string>();
-
-            ScanDir(root, xamls, msgHandler);
-
-            this.TotalFilesToProcess = xamls.Count;
-
-            msgHandler.AddMessage(string.Format("Found {0} xaml files.", xamls.Count));
-
-            msgHandler.AddMessage("Inserting Xaml Tags");
-
-            int count = 0;
-            int exceptionCount = 0;
-            foreach (var file in xamls)
-            {
-                try
-                {
-                    msgHandler.AddMessage("Processing " + file);
-
-                    this.FilesProcessed = count++;
-
-                    var xaml = System.IO.File.ReadAllText(file);
-
-                    var fileName = Path.GetFileName(file);
-                    
-                    var newXaml = this._xmlHelper.TagXmlElements(xaml,
-                        s => msgHandler.AddMessage(s, false), 
-                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file
-                        );
-
-                    msgHandler.AddMessage("Writing: " + file);
-
-                    // remove read only:
-                    System.IO.File.SetAttributes(file, FileAttributes.Normal);
-                    System.IO.File.WriteAllText(file, newXaml);
-                }
-                catch (Exception ex)
-                {
-                    exceptionCount++;
-                    msgHandler.AddMessage("Exception: " + ex.ToString());
-                }
-
-            }
-
-            return exceptionCount;
-        }
-
-        void ScanDir(string path, List<string> files, IMessageHandler msgHandler)
-        {
-
-            var xamls = System.IO.Directory.GetFiles(path)
-                .Where(f => f.EndsWith(".xaml",
-                    StringComparison.InvariantCultureIgnoreCase));
-
-            foreach (var file in xamls)
-            {
-                files.Add(file);
-                msgHandler.AddMessage(file);
-            }
-
-            var dirs = System.IO.Directory.GetDirectories(path);
-
-            foreach (var dir in dirs)
-            {
-                ScanDir(dir, files, msgHandler);
-            }
-
         }
 
         /// <summary>
