@@ -12,7 +12,8 @@ namespace SnoopBCConsole
         {
             var interpreter = new CommandLineInterpreter();
             var msgHelper = new ConsoleMessageHelper();
-                
+
+            List<string> xamls = new List<string>();
 
             if (!interpreter.Parse(args))
             {
@@ -24,7 +25,7 @@ namespace SnoopBCConsole
 
                 var processor = new XamlFilesProcessor();
 
-                var xamls = processor.FindFiles(interpreter.Path, 
+                xamls = processor.FindFiles(interpreter.Path,
                     (s, s1) => msgHelper.AddMessage(s + ": " + s1), msgHelper);
 
                 if (xamls.Count == 0)
@@ -34,8 +35,8 @@ namespace SnoopBCConsole
                 }
                 else
                 {
-                    var exceptions = processor.ProcessXamls(xamls, 
-                        (s, s1) => msgHelper.AddMessage(s + ": " + s1), i => {}, 
+                    var exceptions = processor.ProcessXamls(xamls,
+                        (s, s1) => msgHelper.AddMessage(s + ": " + s1), i => { },
                         msgHelper);
 
                     if (exceptions > 0)
@@ -46,10 +47,13 @@ namespace SnoopBCConsole
                 }
             }
 
+            msgHelper.AddMessage(string.Format(
+                "Successfully added breadcrumbs to {0} files.", xamls.Count));
+
             return 0;
         }
 
-        
+
     }
 
 
