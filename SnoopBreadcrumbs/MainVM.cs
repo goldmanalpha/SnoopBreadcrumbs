@@ -10,16 +10,21 @@ using CrumbLib;
 
 namespace SnoopBreadcrumbs
 {
-    class MainVM : ViewModels.ViewModelBase, IMessageHandler
+    class MainVM : ViewModels.ViewModelBase, IMessageHandler, IHaveSelectedItems
     {
 
         public MainVM()
         {
-            this.RootFolder = @"C:\temp\Main2";
+            this.RootFolder = @"C:\temp\Main";
             DisplayText = "Select the root directory to apply breadcrumbs.\r\n***WARNING.  Xaml files will be overwritten, so using a copy of your project/solution is strongly recommended.";
+
+            IgnoreSelections = new AssemblyHelper().GetFrameworkElements().Select(e => e.Name).ToList();
         }
 
+
         string _displayText;
+
+        public List<string> IgnoreSelections { get; set; }
 
         public string DisplayText
         {
@@ -120,7 +125,8 @@ namespace SnoopBreadcrumbs
                         this.TotalFilesToProcess = xamls.Count;
 
                         exceptionCount += processor.ProcessXamls(xamls, 
-                            ShowErrMsgBox, i => this.FilesProcessed = i, this);
+                            ShowErrMsgBox, i => this.FilesProcessed = i, this,
+                            this.SelectedItems.Cast<string>());
 
                     }
                     catch (Exception ex)
@@ -167,6 +173,8 @@ namespace SnoopBreadcrumbs
             if (isStatus)
                 LastDisplayText = message;
         }
+
+        public System.Collections.IList SelectedItems{get;set;}
     }
 
 }

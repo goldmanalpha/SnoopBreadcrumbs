@@ -37,7 +37,7 @@ namespace SnoopBCConsole
                 {
                     var exceptions = processor.ProcessXamls(xamls,
                         (s, s1) => msgHelper.AddMessage(s + ": " + s1), i => { },
-                        msgHelper);
+                        msgHelper, interpreter.Ignores);
 
                     if (exceptions > 0)
                     {

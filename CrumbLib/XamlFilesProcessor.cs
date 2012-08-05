@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Collections;
 
 namespace CrumbLib
 {
@@ -36,8 +37,8 @@ namespace CrumbLib
         }
 
         public int ProcessXamls(List<string> xamls, 
-            Action<string, string> showError, 
-            Action<int> setFilesProcessed, IMessageHandler msgHandler)
+            Action<string, string> showError,
+            Action<int> setFilesProcessed, IMessageHandler msgHandler, IEnumerable<string> ignoreElements)
         {
             
             msgHandler.AddMessage("Inserting Xaml Tags");
@@ -58,7 +59,8 @@ namespace CrumbLib
 
                     var newXaml = this._xmlHelper.TagXmlElements(xaml,
                         s => msgHandler.AddMessage(s, false),
-                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file
+                        fileName + ": " + XmlHelper.LineNumberFormatTag + " " + file,
+                        ignoreElements.Cast<string>()
                         );
 
                     msgHandler.AddMessage("Writing: " + file);

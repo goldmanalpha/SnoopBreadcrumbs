@@ -67,6 +67,7 @@
     </Content>
     <Content Include="InputOutput\MultiNamespaces.Output.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="InputOutput\Xml1.UnexpectedRootTag.Output.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

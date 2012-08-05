@@ -8,10 +8,14 @@ using System.IO;
 
 namespace CrumbLib
 {
+    using System.Collections;
+
     public class XmlHelper
     {
 
         public const string LineNumberFormatTag = "{LineNo}";
+
+        //"xmlns"
 
         HashSet<string> _requiresXPrefix = new HashSet<string>() { "Class" };
         string[] _validFirstElement = new[] { "ResourceDictionary", "UserControl", "Window" };
@@ -43,9 +47,11 @@ namespace CrumbLib
         /// 
         /// </summary>
         /// <param name="xmlSource"></param>
+        /// <param name="logger"> </param>
         /// <param name="format">must include "{LineNo}" for Line Number spot</param>
+        /// <param name="ignoreElements"> </param>
         /// <returns></returns>
-        public string TagXmlElements(string xmlSource, Action<string> logger, string format = LineNumberFormatTag)
+        public string TagXmlElements(string xmlSource, Action<string> logger, string format, IEnumerable<string> ignoreElements)
         {
 
             var prefixXOnceList = new List<string>();
@@ -121,6 +127,7 @@ namespace CrumbLib
                                     xmlns = attributes["xmlns"];
                                     attributes.Remove("xmlns");
                                 }
+                                //xmlns:cfx
 
                                 if (eName.Contains(":"))
                                 {
@@ -167,7 +174,7 @@ namespace CrumbLib
                                 }
 
 
-                                if (frameworkElements.Contains(eName))
+                                if (frameworkElements.Contains(eName) && !ignoreElements.Contains(eName))
                                 {
 
                                     bool hasTag = reader.GetAttribute("Tag") != null

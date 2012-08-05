@@ -26,8 +26,6 @@ namespace SnoopBreadcrumbs
             InitializeComponent();
 
             this.DataContext = (_vm = new MainVM());
-
-           // _vm.TagXmlElements();
         }
 
         private void GetFolderButtonClick(object sender, RoutedEventArgs e)

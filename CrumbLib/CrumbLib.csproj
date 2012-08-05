@@ -47,6 +47,8 @@
     <Compile Include="AssemblyHelper.cs" />
     <Compile Include="CommandLineInterpreter.cs" />
     <Compile Include="IMessageHandler.cs" />
+    <Compile Include="Behaviors.cs" />
+    <Compile Include="ListBoxBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XamlFilesProcessor.cs" />
     <Compile Include="XmlHelper.cs" />

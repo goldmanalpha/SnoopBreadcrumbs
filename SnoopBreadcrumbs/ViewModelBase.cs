@@ -5,11 +5,13 @@ using System.Windows.Threading;
 
 namespace ViewModels
 {
+    using System.Windows;
+
     /// <summary>
     /// Base class for ViewModels containing some utility
     /// methods
     /// </summary>
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : DependencyObject, INotifyPropertyChanged
     {
         /// <summary>
         /// Checks whether the values for the property changed

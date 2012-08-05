@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CrumbLib
 {
-    class AssemblyHelper
+    public class AssemblyHelper
     {
 
 
