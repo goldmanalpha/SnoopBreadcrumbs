@@ -1,0 +1,3 @@
+<Window Tag="**value**1**end**">
+  <object xmlns:ignorablePrefix="ignorableUri" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="ignorablePrefix"></object>
+</Window>

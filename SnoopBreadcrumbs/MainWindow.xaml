@@ -1,0 +1,150 @@
+﻿<Window x:Class="SnoopBreadcrumbs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:CrumbLib="clr-namespace:CrumbLib;assembly=CrumbLib"
+        xmlns:SnoopBreadcrumbs="clr-namespace:SnoopBreadcrumbs" Title="Xaml Breadcrumbs for Snoop" Height="350" Width="650"
+        >
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="B2VConverter" />
+        <Style TargetType="HeaderedContentControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type HeaderedContentControl}">
+                        <StackPanel >
+                            
+
+                                <ContentPresenter 
+                                    TextBlock.FontSize="12"
+                                    TextBlock.FontWeight="Bold"
+                                    ContentSource="Header"
+                                    x:Name="Title"
+                                    />
+                                <ContentPresenter ContentSource="Content"
+                                CrumbLib:Behaviors.ControlHeight="{TemplateBinding ActualHeight}"                  
+                                CrumbLib:Behaviors.SubtractHeight="{Binding ElementName='Title', Path=ActualHeight}"                                                       
+                                />
+                            
+                            <!--
+                            MaxHeight="{TemplateBinding ActualHeight}"
+                            SnoopBreadcrumbs:Behaviors.ControlHeight="{TemplateBinding ActualHeight}"
+                                    SnoopBreadcrumbs:Behaviors.SubtractHeight="{Binding ElementName='Title', Path=ActualHeight}"--> 
+                                        
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>            
+            <ColumnDefinition Width="Auto"/>    
+        </Grid.ColumnDefinitions>
+        
+        
+            <HeaderedContentControl HeaderedContentControl.Header="Ignore" ToolTip="Ignore selections"
+                                    Grid.Column="1" Grid.RowSpan="3"
+                                    Margin="5 0"
+                                    >
+                <ListBox ItemsSource="{Binding IgnoreSelections}" 
+                         CrumbLib:ListBoxBehavior.BindSelectedItems="true"
+                         SelectionMode="Multiple" 
+                         x:Name="ElementList"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         />                
+            </HeaderedContentControl>
+                
+        <StackPanel Grid.Column="2" Grid.RowSpan="3">
+            <HeaderedContentControl HeaderedContentControl.Header="Ignoring" Margin="5 0">
+                <ItemsControl ItemsSource="{Binding ElementName=ElementList, Path=SelectedItems}" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              />                
+            </HeaderedContentControl>
+                
+        </StackPanel>
+        <StackPanel>
+            <HeaderedContentControl HeaderedContentControl.Header="Root Folder">
+                <Grid>
+                    <TextBox 
+                x:Name="folderPathTextBox"
+                Text="{Binding RootFolder}"
+                HorizontalAlignment="Stretch"
+                    Height="25"
+                />
+
+                    <Button Click="GetFolderButtonClick"
+                Height="{Binding ElementName=folderPathTextBox, Path=ActualHeight}"
+                HorizontalAlignment="Right"                
+                >...</Button>
+                </Grid>
+
+            </HeaderedContentControl>
+            <Button Click="ProcessXamlsClick"
+                    HorizontalAlignment="Left"
+                    >Process</Button>
+        </StackPanel>
+
+        <Grid Opacity="1"
+                  Visibility="{Binding AsyncProcessing, Converter={StaticResource B2VConverter}}"
+              
+              Background="Green"
+                  >
+
+            <StackPanel>
+                <ProgressBar Minimum="0" 
+                             Maximum="{Binding TotalFilesToProcess}"
+                             Value="{Binding FilesProcessed}"
+                             Margin="10"
+                             Height="25"
+                             Foreground="Blue"
+                             />
+                <TextBlock FontSize="13" FontWeight="Bold" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} of {1} File(s) processed">
+                            <Binding Path="FilesProcessed" />
+                            <Binding Path="TotalFilesToProcess" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+        <GridSplitter 
+            ResizeDirection="Rows" 
+            Grid.Row="1"
+            Height="3"
+            HorizontalAlignment="Stretch" 
+            Background="Blue"
+            />
+
+        <TextBox 
+            Grid.Row="2"
+            Text="{Binding DisplayText, Mode=OneWay}"
+                Margin="0"
+                VerticalScrollBarVisibility="Auto"
+             VerticalAlignment="Stretch"
+            HorizontalScrollBarVisibility="Auto"
+                />
+
+        <TextBlock
+            Background="Green"
+            Grid.Row="3"
+            Grid.ColumnSpan="3"
+            Text="{Binding LastDisplayText}"
+                Margin="0"
+               Height="25"
+             HorizontalAlignment="Stretch"
+            FontSize="14"
+            FontWeight="Bold"
+                />
+
+
+    </Grid>
+
+</Window>
