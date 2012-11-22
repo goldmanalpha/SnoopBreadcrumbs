@@ -7,14 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnoopBreadcrumbs", "SnoopBr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{DB65AD9D-6B55-483D-B204-BF7A3BDAB711}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApps", "TestApps", "{6F0800EB-08B4-4037-B2A1-64417DE62BB7}"
-	ProjectSection(SolutionItems) = preProject
-		demo.ps1 = demo.ps1
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocTestApp", "TestApps\AdHocTestApp\AdHocTestApp.csproj", "{C0C0ACC5-E615-474D-A1B7-E59ACA36B7AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnoopBCConsole", "SnoopBCConsole\SnoopBCConsole.csproj", "{5C4F870F-10E9-45D3-8296-D504EDFE4F36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnoopCrumbInclude", "SnoopCrumbInclude\SnoopCrumbInclude.csproj", "{B42486AC-9F9A-4634-84F5-E554750AAA08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +73,16 @@ Global
 		{5C4F870F-10E9-45D3-8296-D504EDFE4F36}.Release|Mixed Platforms.Build.0 = Release|x86
 		{5C4F870F-10E9-45D3-8296-D504EDFE4F36}.Release|x86.ActiveCfg = Release|x86
 		{5C4F870F-10E9-45D3-8296-D504EDFE4F36}.Release|x86.Build.0 = Release|x86
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B42486AC-9F9A-4634-84F5-E554750AAA08}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

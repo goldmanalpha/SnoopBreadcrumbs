@@ -6,9 +6,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525"
-         d:DesignWidth="100" d:DesignHeight="100">
+         d:DesignWidth="100" d:DesignHeight="100"
+        xmlns:crumb="clr-namespace:SnoopCrumbInclude;assembly=SnoopCrumbInclude"
+        >
     <Grid>
-        <ListBox d:Height="255x" Tag="">
+        <ListBox 
+            crumb:_SnoopBreadCrumb._BreadCrumb="location marker"
+            d:Height="255x" Tag="">
             
         </ListBox>
     </Grid>
