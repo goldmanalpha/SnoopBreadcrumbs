@@ -45,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLineInterpreterTester.cs" />
-    <Compile Include="XmlHelperTester.cs" />
+    <Compile Include="FileInputOutputTester.cs" />
+    <Compile Include="XmlHelperXamlTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+<VisualState xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\Tester.nunit</TopNode>
-  <SelectedNode>[0-1000]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\Tester.nunit</SelectedNode>
+  <SelectedNode>[0-1018]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\..\bin\Debug\Tester.dll</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\Tester.nunit" Expanded="true" />
-    <Node UniqueName="[0-1003]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\..\bin\Debug\Tester.dll" Expanded="true" />
-    <Node UniqueName="[0-1004]Tester" Expanded="true" />
-    <Node UniqueName="[0-1001]Tester.XmlHelperTester" Expanded="true" />
+    <Node UniqueName="[0-1018]C:\Data\Dropbox\Prog\SnoopBreadcrumbs\Tester\..\bin\Debug\Tester.dll" Expanded="true" />
+    <Node UniqueName="[0-1019]Tester" Expanded="true" />
+    <Node UniqueName="[0-1001]Tester.CommandLineInterpreterTester" Expanded="true" />
+    <Node UniqueName="[0-1006]Tester.XmlHelperXamlTester" Expanded="true" />
   </Nodes>
 </VisualState>
